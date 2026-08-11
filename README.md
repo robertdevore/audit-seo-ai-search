@@ -6,16 +6,16 @@ The repository is packaged both as a [Codex plugin](https://developers.openai.co
 
 ## One-line install
 
-After the package is published to npm:
+Install directly from GitHub now:
+
+```bash
+npx --yes github:robertdevore/audit-seo-ai-search
+```
+
+After the package is published to npm, the shorter command will be:
 
 ```bash
 npx audit-seo-ai-search
-```
-
-Until then, after this repository is pushed to GitHub:
-
-```bash
-npx github:robertdevore/audit-seo-ai-search
 ```
 
 The installer copies the skill to `$CODEX_HOME/skills/audit-seo-ai-search` when `CODEX_HOME` is set, otherwise to `~/.codex/skills/audit-seo-ai-search`. Restart Codex after installation so the new skill is discovered.
