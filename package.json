@@ -1,0 +1,47 @@
+{
+  "name": "audit-seo-ai-search",
+  "version": "0.1.0",
+  "description": "Install an evidence-based SEO and AI-search audit skill for Codex.",
+  "type": "module",
+  "bin": {
+    "audit-seo-ai-search": "./bin/audit-seo-ai-search.mjs"
+  },
+  "files": [
+    ".codex-plugin/",
+    "bin/",
+    "skills/",
+    "LICENSE",
+    "README.md"
+  ],
+  "scripts": {
+    "test": "node --test",
+    "pack:check": "npm pack --dry-run"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/robertdevore/audit-seo-ai-search.git"
+  },
+  "homepage": "https://github.com/robertdevore/audit-seo-ai-search#readme",
+  "bugs": {
+    "url": "https://github.com/robertdevore/audit-seo-ai-search/issues"
+  },
+  "keywords": [
+    "codex",
+    "chatgpt",
+    "skill",
+    "plugin",
+    "seo",
+    "geo",
+    "aeo",
+    "ai-search",
+    "technical-seo"
+  ],
+  "author": {
+    "name": "Robert DeVore",
+    "url": "https://github.com/robertdevore"
+  },
+  "license": "MIT"
+}
