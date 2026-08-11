@@ -6,19 +6,13 @@ The skill uses the open `SKILL.md` format and is not tied to a specific AI agent
 
 ## One-line install
 
-Install from npm with:
+Install the published npm package with:
 
 ```bash
 npx audit-seo-ai-search
 ```
 
-Until the first npm release—or whenever you prefer installing directly from GitHub—use:
-
-```bash
-npx --yes github:robertdevore/audit-seo-ai-search
-```
-
-`npx` is the package runner; the bare package name above resolves through npm. Publishing the package is therefore required for the shorter command to work for everyone.
+`npx` downloads the current package from npm, runs the installer, and does not require a permanent global installation.
 
 By default, the installer copies the skill to `~/.agents/skills/audit-seo-ai-search`. To install for a product that uses a different skills directory, pass its directory explicitly:
 
@@ -64,15 +58,13 @@ npm run pack:check
 python3 /path/to/skill-creator/scripts/quick_validate.py skills/audit-seo-ai-search
 ```
 
-To publish the first npm release:
+To publish a new npm release, update the package version first, then run:
 
 ```bash
 npm login
 npm whoami
 npm publish --access public
 ```
-
-The package name `audit-seo-ai-search` was unclaimed when this repository was created, but registry availability can change before publication.
 
 ## License
 
