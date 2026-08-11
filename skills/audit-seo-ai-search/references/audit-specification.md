@@ -34,6 +34,8 @@ Preserve these evidence layers separately:
 5. dated manual or API observations;
 6. post-change artifact and production verification.
 
+Assign material results the `verified`, `observed`, `inferred`, `hypothesis`, or `not available` state defined in `evidence-and-measurement.md`. Preserve denominators and raw receipts. Do not compare counts produced by different URL normalization or exclusion rules without a field map.
+
 ## 2. Baseline inventory
 
 For every discovered page capture, where applicable:
@@ -53,6 +55,8 @@ For every discovered page capture, where applicable:
 
 Discover from sitemap plus crawlable HTML. Compare sitemap routes, generated HTML files, navigation, feeds, and known route generators so one source cannot hide omissions.
 
+For each origin also test a real missing nested path, non-HTML indexable assets where applicable, and common canonical aliases. Preserve raw and normalized URLs.
+
 ## 3. Search and AI visibility
 
 Use real sources when available:
@@ -70,6 +74,8 @@ Create a representative query set from observed queries, page topics, branded/no
 
 Create a separate AI benchmark using natural questions: definitions, how-to, recommendations, comparisons, alternatives, troubleshooting, technical adoption, branded, and category questions. Record platform/date, mention, citation, cited URL, context/order, competing domains, factual accuracy, and gaps. Do not fabricate inaccessible sessions.
 
+Do not assign a numeric search position from a generic search provider when engine, locale, personalization/account state, device, or result depth is unknown. Distinguish mention, navigational link, grounded link, and explicit citation in AI answers. Repeat nondeterministic AI observations when they will drive a recommendation.
+
 ## 4. Crawlability and indexability
 
 Audit:
@@ -83,6 +89,8 @@ Audit:
 - CDN/WAF behavior for legitimate crawlers.
 
 Do not change training-crawler policy merely to improve search discovery.
+
+Parse the effective live robots file for each relevant token. Label User-Agent-only HTTP checks as spoofable probes. Use official IP/rDNS validation plus request logs before claiming the real crawler visited successfully.
 
 ## 5. Metadata and content
 
@@ -128,6 +136,8 @@ Audit filenames where practical, accurate alt text, dimensions, responsive sourc
 
 Measure representative templates with Lighthouse plus field data when available. Preserve raw receipts. Record LCP, INP, CLS, TTFB, transfer sizes, requests, render-blocking assets, JavaScript/CSS weight, fonts, media, and third parties.
 
+Use at least three comparable lab samples and report median/range when a score or timing drives priority. A single run may identify a large deterministic defect, but it cannot establish a stable performance delta. Keep local and production environments in separate comparison groups.
+
 Static sites should preserve server-rendered/static HTML advantages. Watch for full-stylesheet swaps, hidden or animated primary headings, missing intrinsic dimensions, client-rendered core content, and cache invalidation failures.
 
 ## 9. Authority, competition, and AI readiness
@@ -138,7 +148,7 @@ Compare representative competing results on intent satisfaction, originality, te
 
 Ask for each important page: what reliable, unique information would justify an AI system citing this page over ten alternatives? Record the content opportunity when the answer is unclear.
 
-Treat `llms.txt`, IndexNow, and future discovery protocols according to current documented adoption. Keep experiments separate from ranking requirements.
+Treat `llms.txt`, IndexNow, and future discovery protocols according to current documented adoption. Google explicitly does not require special AI files or AI-specific content chunking for generative search. Keep experiments separate from ranking requirements, and remember an IndexNow `200` confirms receipt rather than crawling or indexing.
 
 ## 10. Implementation and verification
 
@@ -156,3 +166,4 @@ After changes:
 8. quantify before/after technical changes;
 9. preserve unresolved access/editorial/external items;
 10. define 7/28/60/90-day outcome measurements.
+11. validate the final artifact bundle against its declared schema and verify the sealed baseline has not changed.

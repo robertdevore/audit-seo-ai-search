@@ -63,6 +63,10 @@ Test robots policy and live CDN/WAF response separately for relevant search disc
 
 Verify representative user agents against robots, sitemap, homepage, and key pages. A permissive robots file is ineffective if the CDN blocks the crawler.
 
+A request with a crawler User-Agent string is spoofable and does not prove it came from the provider. Report it only as a generic edge/WAF probe. For verified crawler evidence, match request logs against the provider's current published IP ranges or documented forward/reverse DNS procedure. Keep declared robots policy, spoofable probes, WAF configuration, and verified log traffic in separate fields.
+
+Remember that a robots block prevents crawling but does not guarantee deindexing. A `noindex` rule must be fetchable to be observed. Flag configurations that block a URL in robots while relying on page-level `noindex`.
+
 ## 6. Operational lessons
 
 - Preserve pre-fix evidence before changing DNS or edge rules.
@@ -71,5 +75,6 @@ Verify representative user agents against robots, sitemap, homepage, and key pag
 - Test propagation repeatedly when an edge rule has just been deployed; transient mixed results may occur.
 - Do not commit generated output when repository policy excludes it.
 - Keep provider configuration documented in the audit even when it is not stored in Git.
+- Test the host's actual support for `_headers`, `_redirects`, framework routing, and status-page behavior; generated configuration files have no effect when the host ignores them.
 - Add production monitors for canonical host, `www`, robots, sitemap, and critical routes when the site matters operationally.
 - Keep repository/build dependency pins portable. Use documented environment overrides or temporary pinned worktrees instead of absolute machine paths.

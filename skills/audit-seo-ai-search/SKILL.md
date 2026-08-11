@@ -1,6 +1,6 @@
 ---
 name: audit-seo-ai-search
-description: Perform comprehensive, evidence-based traditional SEO and AI-search/GEO/AEO audits for website repositories and live sites. Preserve an immutable before baseline; research current first-party search and crawler guidance; crawl local and production URLs; audit crawlability, indexability, metadata, content, internal/external links, schema, media, performance, authority, AI crawler access, rankings, and AI citations; implement justified fixes; rebuild and verify generated output and edge routing; create before/after evidence and future measurement plans. Use for full-site SEO audits, technical SEO remediation, AI-search readiness reviews, migrations, post-launch audits, ranking/citation baselines, or requests to improve organic and generative-search discoverability without fabricating outcomes.
+description: Perform comprehensive, evidence-based traditional SEO and AI-search/GEO/AEO audits for one site, multiple origins, repositories, and live delivery chains. Preserve and seal an immutable before baseline; research current first-party guidance; inventory source, generated, rendered, and production states; audit crawling, indexing, metadata, content, links, schema, media, performance, authority, crawler policy, search visibility, and AI citations; implement authorized fixes; validate artifact schemas; deploy only when authorized; and verify comparable before/after evidence without fabricating outcomes. Use for full-site or multi-subdomain SEO audits, technical remediation, AI-search readiness reviews, migrations, post-launch audits, ranking/citation baselines, or discoverability improvements.
 ---
 
 # SEO + AI Search Audit
@@ -13,6 +13,7 @@ Own the engagement from baseline through verified remediation. Optimize for disc
 
 - Read [references/audit-specification.md](references/audit-specification.md) completely for every full audit.
 - Read [references/artifact-schemas.md](references/artifact-schemas.md) completely before creating the audit workspace, datasets, scores, or final report.
+- Read [references/evidence-and-measurement.md](references/evidence-and-measurement.md) completely before testing crawler access, rankings, AI answers, performance, or multiple origins.
 - Read [references/production-diagnostics.md](references/production-diagnostics.md) completely when production, DNS, CDN/WAF, redirects, HTTP status, crawlers, or request logs are in scope.
 
 ## Non-negotiable rules
@@ -27,6 +28,8 @@ Own the engagement from baseline through verified remediation. Optimize for disc
 8. Verify rendered output and production behavior. Source code that looks correct is not evidence that the live site works.
 9. Preserve dated, structured artifacts so a later audit can compare the same fields and benchmark questions.
 10. Treat internal health/readiness scores only as transparent trend heuristics, never platform scores.
+11. Keep SEO findings separate from accessibility, security, deployment, or general maintenance findings unless they directly change discovery, crawling, indexing, rendering, or search presentation.
+12. Use the same URL set, normalization rules, tool versions, environment, and measurement protocol before and after. Explain every exception.
 
 ## Workflow
 
@@ -35,13 +38,14 @@ Own the engagement from baseline through verified remediation. Optimize for disc
 - Read repository instructions and inspect worktree state.
 - Identify which changes are authorized: repository, deployment, DNS/CDN, analytics, search consoles, or read-only audit only.
 - Record the production origin, canonical host, locale, audience, business goals, important conversions, and critical page groups.
+- For multiple hosts or subdomains, define each origin as a separate audit unit and create a portfolio map for ownership, cross-origin links, canonicals, search properties, and shared infrastructure.
 - Preserve unrelated user changes. Do not alter external systems merely because access exists.
 
 ### 2. Research current primary guidance
 
 Consult the current official documentation relevant to the site, including Google Search Central/Search Console, Bing Webmaster Tools/IndexNow, Schema.org, and relevant AI search/crawler providers. Record URLs, retrieval date, and the conclusion supported by each source.
 
-Use primary sources for technical claims. Label emerging practices such as `llms.txt` or new AI protocols as experimental unless official documentation establishes a concrete use.
+Use primary sources for technical claims. Record provider guidance separately because crawler names, purposes, IP ranges, and reporting surfaces change. Treat `llms.txt`, content chunking for AI, and other AI-only files or protocols as experiments unless a target provider documents a concrete use. Do not present them as Google requirements.
 
 ### 3. Understand the site and delivery chain
 
@@ -61,18 +65,24 @@ Run:
 python3 <skill-dir>/scripts/scaffold_audit.py --root . --date YYYY-MM-DD
 ```
 
-Use the repository's existing convention when present. Never overwrite an earlier audit. Extend the scaffold when the site needs additional datasets.
+Use `--label NAME` when the same origin needs more than one immutable workspace on the same date. Pass `--origin` when known. Use the repository's existing convention when present. Never overwrite an earlier audit. Extend the scaffold when the site needs additional datasets.
 
 ### 5. Capture the immutable baseline
 
 - Build the untouched site using the documented pinned toolchain.
 - Preserve the generated baseline outside any directory the next build deletes.
+- Seal the preserved baseline and provenance before editing:
+
+```bash
+python3 <skill-dir>/scripts/seal_baseline.py --audit seo-audit/YYYY-MM-DD --source PATH_TO_UNTOUCHED_OUTPUT --repo-root .
+```
+
 - Crawl every canonical/indexable page discoverable through sitemap and HTML links.
 - Probe the live production equivalent separately.
 - Save raw receipts and normalized CSV/JSON summaries before editing.
 - Record unavailable platform data without inference.
 
-Do not proceed to implementation until the baseline artifacts exist and can be reopened.
+Do not proceed to implementation until the baseline artifacts exist, the seal verifies, and the baseline can be reopened. If preserving the full output is impractical, stop and document a safe project-specific immutable storage approach before editing.
 
 ### 6. Audit the whole system
 
@@ -87,6 +97,8 @@ Cover every category in `references/audit-specification.md`. At minimum inspect:
 - search-console/analytics/log data, representative query observations, controlled AI-answer benchmarks, competitor evidence, and AI crawler access.
 
 Do not call 401/403/405/429 external destinations broken without corroboration. Record them as blocked or indeterminate.
+
+Do not infer real crawler access from a spoofed User-Agent request. Report robots policy, generic UA probe, published-IP/WAF policy, and verified log evidence as separate layers.
 
 ### 7. Prioritize evidence
 
@@ -112,6 +124,14 @@ Require editorial approval for new claims, positioning, commercial intent, or su
 - Crawl the same inventory and regenerate the same fields.
 - Validate internal routes, assets, canonicals, sitemap, robots, JSON-LD parsing/types, metadata uniqueness, image integrity, and accidental content removal.
 - Repeat representative performance measurements under comparable conditions.
+- Run the final artifact validator and resolve every error:
+
+```bash
+python3 <skill-dir>/scripts/validate_audit.py seo-audit/YYYY-MM-DD --final
+```
+
+Set `audit-manifest.json` status to `complete` and outcome to `PASS`, `PASS WITH RECOMMENDATIONS`, or `BLOCKED` before the final validation.
+
 - Diff baseline and after datasets; explain intentional URL-count changes.
 
 If the pinned build cannot run, stop claiming repository validation, preserve the exact blocker, and continue only with independent checks that remain valid.
@@ -142,6 +162,8 @@ Produce the artifact set and final report defined in `references/artifact-schema
 
 Recommend comparable 7-, 28-, 60-, and 90-day measurements. Never say rankings, traffic, or citations improved unless post-change evidence proves it.
 
+For rank or AI-answer observations, preserve the exact provider/product, account state, locale, device, prompt/query, timestamp, result depth, cited URL, and raw receipt. When those controls are unknown, call the result a sampled observation and leave numeric position blank.
+
 ## Definition of done
 
 Complete only when:
@@ -154,6 +176,7 @@ Complete only when:
 - generated output is rebuilt and re-audited;
 - production infrastructure is verified where access permits;
 - before/after datasets, scores, unresolved items, and future benchmarks are reproducible;
+- the baseline seal and final artifact validation pass;
 - every reported result points to evidence;
 - repository changes are verified and handed off according to repository policy.
 

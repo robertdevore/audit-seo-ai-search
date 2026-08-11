@@ -14,6 +14,8 @@ Use `seo-audit/YYYY-MM-DD/` or the repository convention. Keep prior audits immu
 
 Core artifacts:
 
+- `audit-manifest.json` with `schema_version`, `audit_id`, `audit_date`, production origin, baseline-seal state, completion status, and outcome
+- `validation-report.json`
 - `executive-summary.md`
 - `methodology.md`
 - `research-sources.md`
@@ -41,8 +43,11 @@ Core artifacts:
 - `before-after.md`
 - `unresolved.md`
 - `recommendations.md`
+- `raw/baseline-manifest.json` and the preserved `raw/baseline-output/`
 
-Add raw JSON receipts for Lighthouse, search/API observations, headers, or richer crawl data when useful.
+Add raw JSON receipts for every Lighthouse sample, search/API observation, AI answer, header/redirect probe, or richer crawl dataset. Do not commit secrets, private account exports, request-log identifiers, or personal data; store a redacted evidence pointer instead.
+
+Keep the manifest schema version stable within an audit. If a later skill version changes CSV fields, do not silently rewrite a completed audit; migrate into a new immutable workspace or document an explicit field map.
 
 ## 2. Required CSV fields
 
@@ -62,11 +67,11 @@ At minimum use these stable fields; extend rather than rename between comparison
 
 ### Search rankings
 
-`query,search_engine,date,country,device,page_found,observed_position_or_range,competing_results,rich_features,ai_result_presence,evidence,limitations`
+`query,platform,product,date_time,country,locale,device,account_state,result_depth,page_found,observed_position_or_range,competing_results,rich_features,ai_result_presence,evidence,evidence_state,limitations`
 
 ### AI benchmark
 
-`question,platform,date,domain_appeared,domain_cited,cited_url,citation_context,citation_order,competing_domains,accurate_representation,content_gap,evidence,limitations`
+`question,platform,product,model,date_time,country,locale,account_state,run_id,domain_mentioned,domain_linked,domain_cited,cited_url,citation_context,citation_order,competing_domains,accurate_representation,content_gap,evidence,evidence_state,limitations`
 
 ### Links
 
@@ -74,7 +79,13 @@ At minimum use these stable fields; extend rather than rename between comparison
 
 ### Performance
 
-`phase,url,template,run_date,environment,lighthouse_version,html_bytes,css_bytes,js_bytes,image_bytes,font_bytes,requests,lcp_ms,inp_ms,cls,ttfb_ms,source,notes`
+`phase,url,template,run_date,sample_id,environment,tool_version,device_profile,throttling,cache_state,html_bytes,css_bytes,js_bytes,image_bytes,font_bytes,requests,lcp_ms,inp_ms,cls,ttfb_ms,source,evidence_state,notes`
+
+### Crawler access
+
+`phase,crawler,purpose,token,policy_url,robots_allowed,robots_status,ua_probe_status,ua_probe_label,published_ip_policy,verified_log_hits,evidence,evidence_state,recommended_action,action_taken,limitations`
+
+Use `ua_probe_label=spoofable UA probe` for requests that merely set a crawler User-Agent. Use `verified_log_hits` only for traffic verified through provider-supported IP/rDNS evidence; otherwise record `NOT AVAILABLE — DATA ACCESS REQUIRED`.
 
 ## 3. Before/after metrics
 
@@ -92,6 +103,7 @@ Report at least:
 - AI/search crawler access issues;
 - P0/P1 counts;
 - representative lab/field performance;
+- lab sample count, median/range when timing influences a decision, and separately sourced field data;
 - internal SEO and AI-readiness scores.
 
 Explain intentional page-count reductions and distinguish affected-page counts from root causes.
@@ -125,7 +137,7 @@ Suggested AI Search Readiness weights:
 - technical/media readiness 5;
 - measured AI visibility 10.
 
-Award points only for evidence. Missing measured AI visibility earns zero, not an inferred score. Label both as internal heuristics.
+Award points only for evidence. Publish category-level rationale and denominators so another reviewer can reproduce the score. Missing measured AI visibility earns zero, not an inferred score. Do not award AI-readiness points merely for `llms.txt`, content chunking, or spoofable UA probes. Label both as internal heuristics.
 
 ## 5. Final report
 
@@ -141,5 +153,7 @@ Report:
 - real AI visibility baseline;
 - unavailable data and outstanding access/editorial/infrastructure work;
 - exact future measurements and comparison windows.
+
+The report must also state the artifact schema version, baseline-seal result, final validation result, origin(s), evidence-state definitions, and any before/after protocol exceptions.
 
 The executive summary must answer: where was the site, what was wrong, what changed, where is it now technically, what was measured, what could not be measured, and what should happen next.

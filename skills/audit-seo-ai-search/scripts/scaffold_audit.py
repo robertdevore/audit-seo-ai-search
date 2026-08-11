@@ -6,6 +6,8 @@ from __future__ import annotations
 import argparse
 import csv
 import datetime as dt
+import json
+import re
 from pathlib import Path
 
 
@@ -21,6 +23,9 @@ MARKDOWN = {
 }
 
 
+SCHEMA_VERSION = "2.0"
+
+
 INVENTORY_HEADER = "phase,url,source_file,page_type,local_status,production_status,indexable,robots_directives,canonical,canonical_target_status,title,title_length,meta_description,description_length,h1,heading_structure,word_count,lang,published_date,modified_date,author,breadcrumbs,schema_types,internal_inbound_links,internal_outbound_links,external_outbound_links,broken_internal_links,broken_external_links,image_count,missing_alt,missing_dimensions,page_depth,orphan,sitemap_included,duplicate_title,duplicate_description,content_hash,issues"
 
 
@@ -31,16 +36,16 @@ CSV_HEADERS = {
     "metadata-audit.csv": "phase,url,source_file,page_type,title,title_length,meta_description,description_length,canonical,robots_directives,lang,author,og_title,og_description,og_url,og_type,og_image,twitter_card,duplicate_title,duplicate_description,issues",
     "content-audit.csv": "phase,url,source_file,page_type,primary_purpose,search_intent,target_audience,central_entity,primary_query_theme,supporting_topics,h1,heading_structure,word_count,published_date,modified_date,first_hand_signals,content_gap,competing_internal_url,recommended_action",
     "keyword-map.csv": "phase,url,primary_topic,primary_entity,search_intent,primary_query_theme,secondary_queries,related_entities,relevant_questions,competing_internal_url,content_gap,recommended_action",
-    "search-rankings.csv": "query,search_engine,date,country,device,page_found,observed_position_or_range,competing_results,rich_features,ai_result_presence,evidence,limitations",
-    "ai-search-benchmark.csv": "question,platform,date,domain_appeared,domain_cited,cited_url,citation_context,citation_order,competing_domains,accurate_representation,content_gap,evidence,limitations",
+    "search-rankings.csv": "query,platform,product,date_time,country,locale,device,account_state,result_depth,page_found,observed_position_or_range,competing_results,rich_features,ai_result_presence,evidence,evidence_state,limitations",
+    "ai-search-benchmark.csv": "question,platform,product,model,date_time,country,locale,account_state,run_id,domain_mentioned,domain_linked,domain_cited,cited_url,citation_context,citation_order,competing_domains,accurate_representation,content_gap,evidence,evidence_state,limitations",
     "internal-links.csv": "phase,source_url,destination_url,anchor_text,link_context,http_status,final_url,chain_length,verification,rel,recommended_action",
     "external-links.csv": "phase,source_url,destination_url,anchor_text,link_context,http_status,final_url,chain_length,verification,rel,recommended_action",
     "broken-links.csv": "phase,source_url,destination_url,link_type,anchor_text,http_status,evidence,recommended_action",
     "schema-audit.csv": "phase,url,schema_types,json_ld_blocks,valid_json,visible_match,rich_result_eligible,issues,recommended_action",
     "indexability.csv": "phase,url,local_status,production_status,indexable,robots_directives,canonical,canonical_target_status,sitemap_included,sitemap_lastmod,reason",
     "crawlability.csv": "phase,url,page_depth,internal_inbound_links,internal_outbound_links,external_outbound_links,orphan,pages_over_three_clicks,broken_internal_links,redirect_chain,crawlable_html_links,issues",
-    "crawler-access.csv": "crawler,purpose,robots_access,live_status,waf_or_cdn_result,recommended_action,action_taken,evidence",
-    "performance.csv": "phase,url,template,run_date,environment,lighthouse_version,html_bytes,css_bytes,js_bytes,image_bytes,font_bytes,requests,lcp_ms,inp_ms,cls,ttfb_ms,source,notes",
+    "crawler-access.csv": "phase,crawler,purpose,token,policy_url,robots_allowed,robots_status,ua_probe_status,ua_probe_label,published_ip_policy,verified_log_hits,evidence,evidence_state,recommended_action,action_taken,limitations",
+    "performance.csv": "phase,url,template,run_date,sample_id,environment,tool_version,device_profile,throttling,cache_state,html_bytes,css_bytes,js_bytes,image_bytes,font_bytes,requests,lcp_ms,inp_ms,cls,ttfb_ms,source,evidence_state,notes",
     "image-audit.csv": "phase,page_url,image_url,alt_text,alt_present,decorative,width,height,loading,format,local_exists,file_bytes,issues",
     "redirects.csv": "phase,source_url,source_variant,http_status,target_url,chain_length,final_status,canonical_target,query_preserved,verification,issues",
     "issues.csv": "id,phase,category,severity,affected_urls,affected_count,evidence,expected_benefit,confidence,difficulty,recommended_action,owner,status",
@@ -54,10 +59,18 @@ def parse_date(value: str) -> str:
         raise argparse.ArgumentTypeError("date must be YYYY-MM-DD") from exc
 
 
+def parse_label(value: str) -> str:
+    if not re.fullmatch(r"[a-z0-9]+(?:-[a-z0-9]+)*", value):
+        raise argparse.ArgumentTypeError("label must use lowercase letters, digits, and single hyphens")
+    return value
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--root", type=Path, default=Path.cwd(), help="repository root")
     parser.add_argument("--date", type=parse_date, default=dt.date.today().isoformat())
+    parser.add_argument("--label", type=parse_label, help="optional suffix for another audit on the same date")
+    parser.add_argument("--origin", default="", help="canonical production origin, when known")
     parser.add_argument("--directory", default="seo-audit", help="audit directory relative to root")
     args = parser.parse_args()
 
@@ -70,7 +83,8 @@ def main() -> int:
         audit_base.relative_to(root)
     except ValueError as exc:
         raise SystemExit("Refusing --directory outside --root") from exc
-    audit = audit_base / args.date
+    audit_id = args.date + (f"-{args.label}" if args.label else "")
+    audit = audit_base / audit_id
     if audit.exists():
         raise SystemExit(f"Refusing to overwrite existing audit workspace: {audit}")
 
@@ -81,7 +95,28 @@ def main() -> int:
         with (audit / name).open("w", newline="", encoding="utf-8") as handle:
             csv.writer(handle).writerow(header.split(","))
 
-    print(f"Created {audit} with {len(MARKDOWN)} Markdown and {len(CSV_HEADERS)} CSV artifacts.")
+    manifest = {
+        "schema_version": SCHEMA_VERSION,
+        "audit_id": audit_id,
+        "audit_date": args.date,
+        "created_at": dt.datetime.now(dt.timezone.utc).isoformat(),
+        "production_origin": args.origin.rstrip("/"),
+        "baseline": {
+            "sealed": False,
+            "manifest": "raw/baseline-manifest.json",
+            "preserved_output": "raw/baseline-output",
+        },
+        "status": "in_progress",
+        "outcome": "",
+    }
+    (audit / "audit-manifest.json").write_text(
+        json.dumps(manifest, indent=2, sort_keys=True) + "\n", encoding="utf-8"
+    )
+
+    print(
+        f"Created {audit} with {len(MARKDOWN)} Markdown, "
+        f"{len(CSV_HEADERS)} CSV, and one manifest artifact."
+    )
     return 0
 
 
