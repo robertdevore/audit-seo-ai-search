@@ -1,4 +1,0 @@
-interface:
-  display_name: "SEO + AI Search Audit"
-  short_description: "Run evidence-based SEO and AI-search audits"
-  default_prompt: "Use $audit-seo-ai-search to baseline, audit, improve, and verify this website’s SEO and AI-search readiness."

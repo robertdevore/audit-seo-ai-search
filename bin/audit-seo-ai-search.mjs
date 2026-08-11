@@ -13,7 +13,7 @@ const packageJson = JSON.parse(await readFile(join(packageRoot, "package.json"),
 function usage() {
   return `audit-seo-ai-search ${packageJson.version}
 
-Install the SEO + AI Search Audit skill for Codex.
+Install the portable SEO + AI Search Audit Agent Skill.
 
 Usage:
   audit-seo-ai-search [install] [--target <skills-directory>] [--force] [--dry-run]
@@ -23,7 +23,7 @@ Usage:
   audit-seo-ai-search --version
 
 Options:
-  --target <dir>  Codex skills directory (default: $CODEX_HOME/skills or ~/.codex/skills)
+  --target <dir>  Skills directory used by your agent (default: ~/.agents/skills)
   --force         Back up an existing installation before replacing it
   --dry-run       Show the destination without writing files
 `;
@@ -57,8 +57,8 @@ function parseArgs(argv) {
 
 function skillRoot(target) {
   if (target) return resolve(target);
-  const codexRoot = process.env.CODEX_HOME ? resolve(process.env.CODEX_HOME) : join(homedir(), ".codex");
-  return join(codexRoot, "skills");
+  if (process.env.AGENT_SKILLS_HOME) return resolve(process.env.AGENT_SKILLS_HOME);
+  return join(homedir(), ".agents", "skills");
 }
 
 async function exists(path) {
@@ -74,7 +74,6 @@ async function exists(path) {
 async function validateSkill(path) {
   const required = [
     "SKILL.md",
-    "agents/openai.yaml",
     "references/artifact-schemas.md",
     "references/audit-specification.md",
     "references/production-diagnostics.md",
