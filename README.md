@@ -9,7 +9,7 @@ The skill uses the open `SKILL.md` format and is not tied to a specific AI agent
 Install the published npm package with:
 
 ```bash
-npx audit-seo-ai-search
+npx @robertdevore/audit-seo-ai-search
 ```
 
 `npx` downloads the current package from npm, runs the installer, and does not require a permanent global installation.
@@ -17,7 +17,7 @@ npx audit-seo-ai-search
 By default, the installer copies the skill to `~/.agents/skills/audit-seo-ai-search`. To install for a product that uses a different skills directory, pass its directory explicitly:
 
 ```bash
-npx audit-seo-ai-search --target /path/to/your/agent/skills
+npx @robertdevore/audit-seo-ai-search --target /path/to/your/agent/skills
 ```
 
 You can also set `AGENT_SKILLS_HOME` to change the default skills directory. Restart or reload your agent after installation so it discovers the skill.

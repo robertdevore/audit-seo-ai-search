@@ -1,6 +1,6 @@
 {
-  "name": "audit-seo-ai-search",
-  "version": "0.1.1",
+  "name": "@robertdevore/audit-seo-ai-search",
+  "version": "0.1.2",
   "description": "Install an evidence-based SEO and AI-search audit skill for AI agents.",
   "type": "module",
   "bin": {
@@ -19,6 +19,9 @@
   },
   "engines": {
     "node": ">=18"
+  },
+  "publishConfig": {
+    "access": "public"
   },
   "repository": {
     "type": "git",
