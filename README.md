@@ -1,26 +1,34 @@
 # SEO + AI Search Audit
 
-An evidence-based Codex skill for comprehensive traditional SEO and AI-search/GEO/AEO audits. It preserves an immutable baseline, audits source and production behavior, implements justified fixes, and produces reproducible before-and-after evidence without inventing rankings, traffic, or citation outcomes.
+An evidence-based, portable [Agent Skill](https://agentskills.io/specification) for comprehensive traditional SEO and AI-search/GEO/AEO audits. It preserves an immutable baseline, audits source and production behavior, implements justified fixes, and produces reproducible before-and-after evidence without inventing rankings, traffic, or citation outcomes.
 
-The repository is packaged both as a [Codex plugin](https://developers.openai.com/plugins/build/plugins) and as an npm command-line installer.
+The skill uses the open `SKILL.md` format and is not tied to a specific AI agent or coding assistant.
 
 ## One-line install
 
-Install directly from GitHub now:
-
-```bash
-npx --yes github:robertdevore/audit-seo-ai-search
-```
-
-After the package is published to npm, the shorter command will be:
+Install from npm with:
 
 ```bash
 npx audit-seo-ai-search
 ```
 
-The installer copies the skill to `$CODEX_HOME/skills/audit-seo-ai-search` when `CODEX_HOME` is set, otherwise to `~/.codex/skills/audit-seo-ai-search`. Restart Codex after installation so the new skill is discovered.
+Until the first npm release—or whenever you prefer installing directly from GitHub—use:
 
-Then invoke it explicitly:
+```bash
+npx --yes github:robertdevore/audit-seo-ai-search
+```
+
+`npx` is the package runner; the bare package name above resolves through npm. Publishing the package is therefore required for the shorter command to work for everyone.
+
+By default, the installer copies the skill to `~/.agents/skills/audit-seo-ai-search`. To install for a product that uses a different skills directory, pass its directory explicitly:
+
+```bash
+npx audit-seo-ai-search --target /path/to/your/agent/skills
+```
+
+You can also set `AGENT_SKILLS_HOME` to change the default skills directory. Restart or reload your agent after installation so it discovers the skill.
+
+Then ask your agent to use the skill, using whatever invocation syntax that client supports. For example:
 
 ```text
 Use $audit-seo-ai-search to audit this site, implement safe fixes, and verify the result.
@@ -53,16 +61,14 @@ Requirements: Node.js 18+ and Python 3 for the skill's audit scaffold.
 ```bash
 npm test
 npm run pack:check
-python3 /path/to/plugin-creator/scripts/validate_plugin.py .
 python3 /path/to/skill-creator/scripts/quick_validate.py skills/audit-seo-ai-search
 ```
 
-Keep the versions in `package.json` and `.codex-plugin/plugin.json` synchronized. To release after creating the GitHub repository:
+To publish the first npm release:
 
 ```bash
-git remote add origin git@github.com:robertdevore/audit-seo-ai-search.git
-git push -u origin main
 npm login
+npm whoami
 npm publish --access public
 ```
 
