@@ -1,0 +1,37 @@
+{
+  "name": "audit-seo-ai-search",
+  "version": "0.1.0",
+  "description": "Evidence-based traditional SEO and AI-search auditing with reproducible before-and-after verification.",
+  "author": {
+    "name": "Robert DeVore",
+    "url": "https://github.com/robertdevore"
+  },
+  "homepage": "https://github.com/robertdevore/audit-seo-ai-search#readme",
+  "repository": "https://github.com/robertdevore/audit-seo-ai-search",
+  "license": "MIT",
+  "keywords": [
+    "seo",
+    "geo",
+    "aeo",
+    "ai-search",
+    "technical-seo"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "SEO + AI Search Audit",
+    "shortDescription": "Evidence-based SEO, GEO, and AEO audits.",
+    "longDescription": "Baseline, remediate, rebuild, and verify traditional SEO and AI-search readiness across repositories, generated output, and production infrastructure.",
+    "developerName": "Robert DeVore",
+    "category": "Productivity",
+    "capabilities": [
+      "Analyze",
+      "Write"
+    ],
+    "websiteURL": "https://github.com/robertdevore/audit-seo-ai-search",
+    "defaultPrompt": [
+      "Audit this site's SEO and AI-search readiness.",
+      "Baseline, fix, and verify this website's SEO.",
+      "Check production redirects and crawler access."
+    ]
+  }
+}
