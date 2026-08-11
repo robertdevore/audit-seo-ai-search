@@ -41,10 +41,15 @@ An existing installation is never overwritten implicitly. `--force` first rename
 ## What the skill covers
 
 - Immutable local and production baselines
+- Cryptographically sealed baseline copies and final artifact validation
 - Crawlability, indexability, canonicals, redirects, sitemaps, and robots
 - Metadata, content quality, entity clarity, internal links, and schema
 - Media, accessibility, performance, authority, and historical URL handling
 - AI crawler access, AI citation benchmarks, GEO/AEO readiness, and current primary-source research
+- Separate evidence states for verified results, observations, inferences, hypotheses, and unavailable data
+- Multi-origin and subdomain portfolio controls with per-origin denominators
+- Reproducible crawler-policy checks that distinguish robots rules, spoofable User-Agent probes, WAF/IP policy, and verified logs
+- Controlled search, AI-answer, and multi-sample performance measurement protocols
 - Safe remediation, rebuilds, production checks, and before/after artifacts
 - CDN, DNS, WAF, 4xx/5xx, and redirect diagnostics when infrastructure is in scope
 
@@ -56,6 +61,7 @@ Requirements: Node.js 18+ and Python 3 for the skill's audit scaffold.
 npm test
 npm run pack:check
 python3 /path/to/skill-creator/scripts/quick_validate.py skills/audit-seo-ai-search
+python3 skills/audit-seo-ai-search/scripts/scaffold_audit.py --root /tmp/example --date 2026-01-01 --origin https://example.com
 ```
 
 To publish a new npm release, update the package version first, then run:

@@ -76,8 +76,11 @@ async function validateSkill(path) {
     "SKILL.md",
     "references/artifact-schemas.md",
     "references/audit-specification.md",
+    "references/evidence-and-measurement.md",
     "references/production-diagnostics.md",
-    "scripts/scaffold_audit.py"
+    "scripts/scaffold_audit.py",
+    "scripts/seal_baseline.py",
+    "scripts/validate_audit.py"
   ];
 
   for (const relativePath of required) {

@@ -1,6 +1,6 @@
 {
   "name": "@robertdevore/audit-seo-ai-search",
-  "version": "0.1.2",
+  "version": "0.2.0",
   "description": "Install an evidence-based SEO and AI-search audit skill for AI agents.",
   "type": "module",
   "bin": {
